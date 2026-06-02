@@ -222,12 +222,15 @@
   .tree-toggle {
     width: 16px; height: 16px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 9px; flex-shrink: 0;
+    color: var(--text-muted); font-size: 11px; flex-shrink: 0;
+    cursor: pointer; user-select: none;
+    transition: transform 0.15s;
   }
+  .tree-toggle.collapsed { transform: rotate(-90deg); }
   .tree-icon { margin-right: 4px; font-size: 12px; }
-  .tree-label { overflow: hidden; text-overflow: ellipsis; }
+  .tree-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tree-label .tag { color: var(--xml-tag); }
-  .tree-label .attr { color: var(--xml-attr); font-size: 11px; }
+  .tree-label .attr-key { color: var(--xml-attr); font-size: 11px; font-style: italic; margin-left: 4px; }
   .tree-children { padding-left: 16px; }
   .tree-children.hidden { display: none; }
 
@@ -1439,30 +1442,72 @@ function buildTreeNode(el, depth) {
   const id = 'tn_' + Math.random().toString(36).slice(2);
   const children = Array.from(el.childNodes).filter(c => c.nodeType === 1);
   const attrs = Array.from(el.attributes || []);
-  const attrStr = attrs.slice(0,2).map(a => ` <span class="attr">${a.name}="${a.value.substring(0,15)}${a.value.length>15?'…':''}"</span>`).join('');
-  const toggle = children.length ? `<span class="tree-toggle" onclick="toggleTree('${id}')">▾</span>` : '<span class="tree-toggle"></span>';
-  let html = `<div class="tree-node" onclick="selectTreeNode(this, '${el.tagName}')">
+
+  // Show the value of the most meaningful identifier attribute (name, id, key, type, code)
+  const keyAttr = attrs.find(a => /^(name|id|key|type|code|title|ref)$/i.test(a.name));
+  const attrLabel = keyAttr
+    ? ` <span class="attr-key">${keyAttr.value.substring(0, 20)}${keyAttr.value.length > 20 ? '…' : ''}</span>`
+    : (attrs.length > 0 ? ` <span class="attr-key">${attrs[0].name}="${attrs[0].value.substring(0,12)}${attrs[0].value.length>12?'…':''}"</span>` : '');
+
+  // Start collapsed if depth > 0
+  const startCollapsed = depth > 0;
+  const toggleClass = startCollapsed ? 'tree-toggle collapsed' : 'tree-toggle';
+  const childClass = startCollapsed ? 'tree-children hidden' : 'tree-children';
+  const toggle = children.length
+    ? `<span class="${toggleClass}" onclick="event.stopPropagation();toggleTree('${id}', this)">▾</span>`
+    : '<span class="tree-toggle"></span>';
+
+  const safeTag = el.tagName.replace(/'/g, "\\'");
+  let html = `<div class="tree-node" onclick="selectTreeNode(this, '${safeTag}')">
     ${toggle}<span class="tree-icon" style="color:var(--xml-tag)">◈</span>
-    <span class="tree-label"><span class="tag">&lt;${el.tagName}&gt;</span>${attrStr}</span>
+    <span class="tree-label"><span class="tag">&lt;${el.tagName}&gt;</span>${attrLabel}</span>
   </div>`;
   if (children.length) {
-    html += `<div class="tree-children" id="${id}">`;
-    for (const child of children) html += buildTreeNode(child, depth+1);
+    html += `<div class="${childClass}" id="${id}">`;
+    for (const child of children) html += buildTreeNode(child, depth + 1);
     html += '</div>';
   }
   return html;
 }
 
-function toggleTree(id) {
+function toggleTree(id, toggleEl) {
   const el = document.getElementById(id);
   if (!el) return;
   el.classList.toggle('hidden');
+  if (toggleEl) toggleEl.classList.toggle('collapsed');
 }
 
 function selectTreeNode(el, tag) {
   document.querySelectorAll('.tree-node.selected').forEach(n => n.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('elem-xpath').textContent = `//` + tag;
+
+  // Scroll main editor to the first occurrence of this tag
+  const raw = tabs[currentTab]?.content || getRawText();
+  const searchStr = '<' + tag;
+  const idx = raw.indexOf(searchStr);
+  if (idx === -1) return;
+
+  // Count line number
+  const lineNum = raw.substring(0, idx).split('\n').length;
+
+  // Scroll line-numbers and code-scroll panels to that line
+  const codeEl = document.getElementById('code-editor');
+  const scrollEl = document.getElementById('code-scroll');
+  if (!codeEl || !scrollEl) return;
+
+  // Each line is approx 1 em tall — use line-height of the editor
+  const lineHeight = parseFloat(getComputedStyle(codeEl).lineHeight) || 18;
+  const targetScrollTop = (lineNum - 1) * lineHeight - scrollEl.clientHeight / 3;
+  scrollEl.scrollTop = Math.max(0, targetScrollTop);
+  document.getElementById('line-numbers').scrollTop = scrollEl.scrollTop;
+
+  // Highlight the line briefly
+  const lines = codeEl.querySelectorAll('.line, div');
+  if (lines[lineNum - 1]) {
+    lines[lineNum - 1].style.background = 'var(--bg-active)';
+    setTimeout(() => { if (lines[lineNum - 1]) lines[lineNum - 1].style.background = ''; }, 1200);
+  }
 }
 
 function updateAttrPanel() {
@@ -1814,7 +1859,7 @@ function onFileLoad(e) {
     tabs.push({ name: file.name, content: ev.target.result, modified: false });
     addTabUI(idx, file.name);
     switchTabTo(idx);
-    validateXML(); buildTree();
+    formatXML(); validateXML(); buildTree();
   };
   reader.readAsText(file);
   e.target.value = '';
@@ -1844,7 +1889,7 @@ function loadSample(key) {
   tabs[currentTab].name = key + '.xml';
   document.getElementById(`tab-name-${currentTab}`).textContent = key + '.xml';
   renderEditor();
-  validateXML(); buildTree();
+  formatXML(); validateXML(); buildTree();
 }
 
 // ════════════════════════════════════════════════════════
