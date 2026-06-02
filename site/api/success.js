@@ -16,7 +16,7 @@ const r2 = new S3Client({
   },
 })
 
-const PRODUCT_URL = 'https://techdensolutions.com/products/dnc-xml-editor'
+const PRODUCT_URL = process.env.BASE_URL || 'https://techdensolutions.com/products/dnc-xml-editor'
 
 export default async function handler(req, res) {
   const { session_id } = req.query

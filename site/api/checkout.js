@@ -5,7 +5,7 @@ import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
-const BASE_URL = 'https://techdensolutions.com/products/dnc-xml-editor'
+const BASE_URL = process.env.BASE_URL || 'https://techdensolutions.com/products/dnc-xml-editor'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
