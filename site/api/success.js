@@ -51,7 +51,8 @@ export default async function handler(req, res) {
   }
 
   const email    = session.customer_details?.email || ''
-  const redirect = `/products/dnc-xml-editor/success` +
+  const base     = process.env.BASE_URL || ''
+  const redirect = `${base}/success` +
     `?download=${encodeURIComponent(downloadUrl)}` +
     `&email=${encodeURIComponent(email)}`
 
