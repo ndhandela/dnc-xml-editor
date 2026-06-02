@@ -5,12 +5,15 @@ import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
-const BASE_URL = process.env.BASE_URL || 'https://techdensolutions.com/products/dnc-xml-editor'
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+
+  // Derive base URL from the incoming request — works on any Vercel deployment URL
+  const proto   = req.headers['x-forwarded-proto'] || 'https'
+  const host    = req.headers['x-forwarded-host']  || req.headers.host
+  const baseUrl = `${proto}://${host}`
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -31,8 +34,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: `${BASE_URL}/api/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${BASE_URL}/cancel.html`,
+      success_url: `${baseUrl}/api/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${baseUrl}/cancel.html`,
       billing_address_collection: 'auto',
       customer_creation: 'always',
     })
