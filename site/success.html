@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful — Download DNC XML Editor | TechDen Solutions</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    main { max-width: 580px; margin: 72px auto; padding: 0 1.5rem; text-align: center; }
+
+    .success-ring {
+      width: 72px; height: 72px;
+      background: var(--green-bg);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.25rem;
+      margin: 0 auto 1.5rem;
+    }
+    h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: .5rem; }
+    .sub { color: var(--text-secondary); font-size: .97rem; margin-bottom: 2.5rem; line-height: 1.7; }
+    .sub strong { color: var(--text-primary); }
+
+    .download-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .download-card h2 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+    .file-meta { font-size: .82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 30px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: background .15s;
+      letter-spacing: -.01em;
+    }
+    .download-btn:hover { background: var(--brand-dark); color: #fff; text-decoration: none; }
+    .download-btn.expired { background: var(--text-muted); pointer-events: none; }
+
+    .timer {
+      font-size: .82rem;
+      color: #d97706;
+      margin-top: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+    .timer.urgent { color: #dc2626; }
+
+    .install-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    .install-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 1rem; }
+    .install-card ol { padding-left: 1.25rem; display: flex; flex-direction: column; gap: 8px; }
+    .install-card li { font-size: .875rem; color: var(--text-secondary); line-height: 1.55; }
+    .install-card li strong { color: var(--text-primary); }
+
+    .support-note { font-size: .83rem; color: var(--text-muted); }
+    .support-note a { color: var(--brand); }
+
+    .expired-card {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="logo" href="https://techdensolutions.com"><span>TechDen</span> Solutions</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="success-ring">✓</div>
+  <h1>Payment Successful — Thank You!</h1>
+  <p class="sub" id="subText">
+    Your DNC XML Editor license is ready.<br>
+    <strong>Download link expires in 15 minutes</strong> — save the file immediately.
+  </p>
+
+  <!-- Download card (shown when URL is present) -->
+  <div class="download-card" id="downloadCard">
+    <h2>DNC XML Editor — Windows Installer</h2>
+    <p class="file-meta">DNC-XML-Editor-Setup-1.0.0.exe &nbsp;·&nbsp; Windows 10/11 64-bit</p>
+    <a id="downloadBtn" class="download-btn" href="#">⬇&nbsp; Download Now</a>
+    <p class="timer" id="timer">⏱ Link expires in 15:00</p>
+  </div>
+
+  <!-- Shown when link is expired or missing -->
+  <div class="expired-card" id="expiredCard">
+    This download link has expired or is no longer valid.<br><br>
+    Email <a href="mailto:support@techdensolutions.com">support@techdensolutions.com</a>
+    with your order email address and we'll send a fresh link within a few hours.
+  </div>
+
+  <!-- Install steps -->
+  <div class="install-card">
+    <h3>Installation Instructions</h3>
+    <ol>
+      <li>Run the downloaded <strong>.exe</strong> installer.</li>
+      <li>If Windows SmartScreen appears, click <strong>"More info" → "Run anyway"</strong> — the app is safe but unsigned.</li>
+      <li>Follow the setup wizard; it creates a <strong>desktop shortcut</strong> automatically.</li>
+      <li>Launch <strong>DNC XML Editor</strong> from your desktop or Start Menu.</li>
+    </ol>
+  </div>
+
+  <p class="support-note">
+    Questions? Email <a href="mailto:support@techdensolutions.com">support@techdensolutions.com</a>
+  </p>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span>© 2025 <a href="https://techdensolutions.com">TechDen Solutions</a></span>
+      <span><a href="mailto:support@techdensolutions.com">support@techdensolutions.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const params = new URLSearchParams(window.location.search)
+  const downloadUrl = params.get('download')
+  const email = params.get('email')
+
+  const downloadCard = document.getElementById('downloadCard')
+  const expiredCard  = document.getElementById('expiredCard')
+  const downloadBtn  = document.getElementById('downloadBtn')
+  const timerEl      = document.getElementById('timer')
+  const subText      = document.getElementById('subText')
+
+  if (!downloadUrl) {
+    downloadCard.style.display = 'none'
+    expiredCard.style.display = 'block'
+    subText.textContent = 'There was a problem retrieving your download link.'
+  } else {
+    downloadBtn.href = decodeURIComponent(downloadUrl)
+    if (email) {
+      subText.innerHTML =
+        `Your DNC XML Editor license is ready (<strong>${decodeURIComponent(email)}</strong>).<br>` +
+        `<strong>Download link expires in 15 minutes</strong> — save the file immediately.`
+    }
+
+    // 15-minute countdown
+    let secs = 15 * 60
+    const tick = setInterval(() => {
+      secs--
+      if (secs <= 0) {
+        clearInterval(tick)
+        timerEl.textContent = '⚠ Link expired'
+        timerEl.className = 'timer urgent'
+        downloadBtn.className = 'download-btn expired'
+        downloadBtn.removeAttribute('href')
+        return
+      }
+      if (secs <= 60) timerEl.className = 'timer urgent'
+      const m = String(Math.floor(secs / 60)).padStart(2, '0')
+      const s = String(secs % 60).padStart(2, '0')
+      timerEl.textContent = `⏱ Link expires in ${m}:${s}`
+    }, 1000)
+  }
+</script>
+
+</body>
+</html>

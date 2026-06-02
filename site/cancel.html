@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Cancelled | DNC XML Editor — TechDen Solutions</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    main {
+      max-width: 520px;
+      margin: 100px auto;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    .cancel-icon {
+      width: 64px; height: 64px;
+      background: #fef9c3;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.5rem;
+    }
+    h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: .5rem; }
+    .sub { color: var(--text-secondary); font-size: .97rem; margin-bottom: 2.5rem; line-height: 1.7; }
+    .actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1.5px solid var(--border);
+      color: var(--text-secondary);
+      padding: 12px 22px;
+      border-radius: var(--radius);
+      font-size: .9rem;
+      font-weight: 500;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-outline:hover { border-color: var(--brand); color: var(--brand); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="logo" href="https://techdensolutions.com"><span>TechDen</span> Solutions</a>
+      <ul class="nav-links">
+        <li><a href="https://techdensolutions.com">Home</a></li>
+        <li><a href="https://techdensolutions.com/products">Products</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="cancel-icon">✕</div>
+  <h1>Payment Cancelled</h1>
+  <p class="sub">
+    No charge was made. You can go back to the product page whenever you're ready.
+  </p>
+  <div class="actions">
+    <a class="btn-primary" href="/products/dnc-xml-editor" style="background:var(--brand);color:#fff;border-radius:var(--radius);padding:13px 24px;font-weight:700;font-size:.95rem;">
+      ← Back to DNC XML Editor
+    </a>
+    <a class="btn-outline" href="mailto:support@techdensolutions.com">
+      Contact Support
+    </a>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span>© 2025 <a href="https://techdensolutions.com">TechDen Solutions</a></span>
+      <span><a href="mailto:support@techdensolutions.com">support@techdensolutions.com</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
