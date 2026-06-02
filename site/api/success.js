@@ -51,8 +51,7 @@ export default async function handler(req, res) {
   }
 
   const email    = session.customer_details?.email || ''
-  const base     = process.env.BASE_URL || ''
-  const redirect = `${base}/success.html` +
+  const redirect = `/success.html` +
     `?download=${encodeURIComponent(downloadUrl)}` +
     `&email=${encodeURIComponent(email)}`
 
