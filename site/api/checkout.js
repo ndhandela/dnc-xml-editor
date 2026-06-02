@@ -31,8 +31,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: `${BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${BASE_URL}/cancel`,
+      success_url: `${BASE_URL}/api/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${BASE_URL}/cancel.html`,
       billing_address_collection: 'auto',
       customer_creation: 'always',
     })
